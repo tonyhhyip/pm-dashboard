@@ -1,0 +1,26 @@
+<template>
+    <div class="container">
+        <slot />
+    </div>
+</template>
+
+<style>
+.container {
+  margin: 0 auto;
+  max-width: 1280px;
+  width: 90%;
+}
+
+@media only screen and (min-width: 601px) {
+  .container {
+    width: 85%;
+  }
+}
+
+@media only screen and (min-width: 993px) {
+  .container {
+    width: 70%;
+  }
+}
+
+</style>
