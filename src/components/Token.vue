@@ -10,32 +10,36 @@
           <label>Circle CI API Token</label>
           <md-input v-model="token" />
         </md-input-container>
+        <p>
+          You may go to
+          <a href="https://circleci.com/account/api" target="_blank">here</a>
+          to create a new API token
+        </p>
+        <md-button class="md-raised md-primary" type="submit">
+          Submit
+        </md-button>
       </form>
-      <p>
-        You may go to
-        <a href="https://circleci.com/account/api" target="_blank">here</a>
-        to create a new API token
-      </p>
     </Container>
   </div>
 </template>
 
 <script>
-import Container from './Container.vue';
-import Header from './Header.vue';
-export default {
-  data () {
-    return {
-      token: ''
-    }
-  },
-  components: { Container },
-  methods: {
-    submit() {
-      localStorage.setItem('api-token', this.token);
-      this.$router.replace({name: 'home'});
+  import Container from './Container.vue';
+  import Header from './Header.vue';
+  export default {
+    data () {
+      return {
+        token: ''
+      }
+    },
+    components: { Container },
+    methods: {
+      submit() {
+        localStorage.setItem('api-token', this.token);
+        this.$store.commit('setToken', this.token);
+        this.$router.replace({name: 'home'});
+      }
     }
   }
-}
 </script>
 
