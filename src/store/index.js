@@ -1,17 +1,19 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import state from './state';
+import actions from './actions';
+import mutations from './mutations';
+
+import projects from './modules/projects';
+
 Vue.use(Vuex);
 
-const token = localStorage.getItem('api-token');
-
 export default new Vuex.Store({
-  state: {
-    token
-  },
-  mutation: {
-    setToken(state, token) {
-      state.token = token;
-    }
+  state,
+  actions,
+  mutations,
+  modules: {
+    projects,
   }
 });
