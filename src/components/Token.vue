@@ -37,7 +37,7 @@
       submit() {
         localStorage.setItem('api-token', this.token);
         this.$store.dispatch('saveToken', this.token);
-        this.$router.replace({name: 'loading'});
+        this.$router.replace({name: 'home'});
       }
     }
   }
