@@ -16,7 +16,7 @@
                     </div>
                 </md-card-header>
                 <md-card-actions>
-                    <md-button class="md-raised">View Report</md-button>
+                    <md-button class="md-raised" v-if="project.status !== 'warn'">View Report</md-button>
                 </md-card-actions>
             </md-card>
         </container>
