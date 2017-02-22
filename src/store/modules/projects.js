@@ -1,21 +1,22 @@
 import {FETCH_PROJECT} from '../types';
 
-function determineLevel(success, fail) {
-  if (!success) {
-    return 'fail';
-  }
+const WARN_REASON = [
+  'canceled',
+  'no_tests',
+];
 
+function determineLevel(success, fail) {
   if (!fail) {
     return 'success';
   }
 
-  if (success.build_num > fail.build_num) {
+  if (success && success.build_num > fail.build_num) {
     return 'success';
   }
 
   const {outcome} = fail;
 
-  if (outcome === 'canceled') {
+  if (WARN_REASON.indexOf(outcome) !== -1) {
     return 'warn';
   }
 
@@ -44,14 +45,16 @@ const getters = {
   },
   projectOverview(state, getter) {
     return getter.allProject.map((project) => {
-      const master = project.branches.master;
-      const status = determineLevel(master.last_success, master.last_non_success);
-      const commit = status === 'success' ? master.last_success.vcs_revision : master.last_non_success.vcs_revision;
+      const success = project.branches.master.last_success;
+      const fail = project.branches.master.last_non_success;
+      const status = determineLevel(success, fail);
+      const result = status === 'success' ? success : fail;
       return {
         status,
+        commit: result.vcs_revision.substr(0, 6),
+        owner: project.username,
         icon: project.vcs_type,
         name: project.reponame,
-        commit: commit.substr(0, 6),
       };
     });
   },
