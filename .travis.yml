@@ -1,0 +1,27 @@
+language: node_js
+
+sudo: false
+cache: yarn
+node_js:
+  - '6'
+
+env:
+  global:
+    - CXX=g++-4.8
+    - AUTO_BUILD=true
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+
+install:
+  - npm install
+
+script:
+  - npm run build
+
+after_success:
+  - test $AUTO_BUILD == 'true' && bash deploy.sh
