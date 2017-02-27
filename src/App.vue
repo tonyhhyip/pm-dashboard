@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <page-header />
     <transition name="fade" mode="out-in">
       <router-view></router-view>
     </transition>
@@ -8,7 +9,10 @@
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    'page-header': require('./components/Header.vue')
+  }
 }
 </script>
 

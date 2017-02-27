@@ -8,6 +8,7 @@ const router = new Router({
   routes: [
     require('./token'),
     require('./home'),
+    require('./report'),
   ]
 });
 

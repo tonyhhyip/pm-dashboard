@@ -24,7 +24,8 @@ function determineLevel(success, fail) {
 }
 
 const state = {
-  all: []
+  all: [],
+  report: {},
 };
 
 const mutations = {
@@ -49,12 +50,22 @@ const getters = {
       const fail = project.branches.master.last_non_success;
       const status = determineLevel(success, fail);
       const result = status === 'success' ? success : fail;
+      const report = {
+        name: 'report',
+        params: {
+          host: project.vcs_type,
+          owner: project.username,
+          project: project.reponame,
+          build: result.build_num,
+        },
+      };
       return {
         status,
+        report,
         commit: result.vcs_revision.substr(0, 6),
-        owner: project.username,
         icon: project.vcs_type,
         name: project.reponame,
+        build: result.build_num,
       };
     });
   },
