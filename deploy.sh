@@ -18,7 +18,7 @@ git fetch && git reset origin/gh-pages
 touch .
 
 git checkout -- README.md
-# git checkout -- CNAME
+git checkout -- CNAME
 
 git add -A .
 git commit -m "Build of ${rev}"
