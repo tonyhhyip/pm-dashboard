@@ -1,5 +1,5 @@
 <template>
-  <Container>
+  <container>
     <h2>Input Token</h2>
     <form novalidate @submit.stop.prevent="submit">
       <md-input-container>
@@ -15,7 +15,7 @@
         Submit
       </md-button>
     </form>
-  </Container>
+  </container>
 </template>
 
 <script>

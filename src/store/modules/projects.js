@@ -1,4 +1,7 @@
-import {FETCH_PROJECT} from '../types';
+import {
+  FETCH_PROJECT,
+  FETCH_REPORT,
+} from '../types';
 
 const WARN_REASON = [
   'canceled',
@@ -25,19 +28,36 @@ function determineLevel(success, fail) {
 
 const state = {
   all: [],
-  report: {},
+  reports: {
+    bitbucket: {},
+    github: {},
+  },
 };
 
 const mutations = {
   [FETCH_PROJECT](state, projects) {
     state.all = projects;
+  },
+  [FETCH_REPORT](state, {host, owner, project, build, data}) {
+    state.reports = Object.assign({}, state.reports, {
+      [host]: {
+        [owner]: {
+          [project]: {
+            [build]: data,
+          }
+        }
+      }
+    });
   }
 };
 
 const actions = {
   fetchProject({commit}, projects) {
     commit(FETCH_PROJECT, projects);
-  }
+  },
+  fetchReport({commit}, report) {
+    commit(FETCH_REPORT, report);
+  },
 };
 
 const getters = {
@@ -66,6 +86,7 @@ const getters = {
         icon: project.vcs_type,
         name: project.reponame,
         build: result.build_num,
+        url: project.vcs_url,
       };
     });
   },
