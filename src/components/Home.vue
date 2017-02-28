@@ -3,7 +3,7 @@
         <h2>Projects</h2>
         <br v-if="fetching" />
         <md-progress md-indeterminate v-if="fetching" />
-        <md-card v-for="project in projects" class="md-primary" :md-theme="project.status">
+        <md-card v-for="project in projects" class="md-primary" :md-theme="project.status" :key="project.name">
             <md-card-header>
                 <div class="md-title">
                     {{project.name}}

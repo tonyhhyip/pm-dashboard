@@ -14,7 +14,7 @@
         </div>
         <md-card v-if="project !== null">
             <md-list v-if="reports.length > 0">
-                <md-list-item v-for="report in reports" :href="report.url" target="_blank">
+                <md-list-item v-for="report in reports" :href="report.url" target="_blank" :key="report.path">
                     {{ titleReport(report.pretty_path) }}
                     <md-icon>send</md-icon>
                 </md-list-item>
