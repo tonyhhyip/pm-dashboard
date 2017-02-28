@@ -2,7 +2,5 @@
 
 export function reportExists(state, params) {
   const host = state[params.host];
-  if (!(params.owner in host)) {
-    return false;
-  }
+  return host && params.owner in host && params.project in host[params.owner] && params.build in host[params.owner][params.project];
 }

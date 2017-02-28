@@ -20,6 +20,19 @@
                 </md-list-item>
             </md-list>
         </md-card>
+        <md-card v-if="error !== null">
+            <md-card-header>
+                    <div class="md-title">
+                        Error occur
+                    </div>
+            </md-card-header>
+            <md-card-content>
+                {{ error }}
+            </md-card-content>
+            <md-card-actions>
+                <md-button href="/#/" class="md-raised md-accent">Home</md-button>
+            </md-card-actions>
+        </md-card>
     </container>
 </template>
 <script>
@@ -33,6 +46,7 @@
         fetching: true,
         project: null,
         reports: [],
+        error: null,
       }
     },
     computed: {
@@ -62,7 +76,7 @@
         return `${name.charAt(0).toUpperCase()}${name.substr(1)}`;
       },
       displayReport(params) {
-        const { reports } = this.$store.state.projects;
+        const reports = this.$store.state.projects.reports;
         const output = () => {
           this.fetching = false;
           const project = this.projects.filter(project => project.name === params.project);
@@ -83,11 +97,18 @@
               if (response.status === 200) {
                 return response.json();
               } else {
-                throw new Error(response);
+                throw response;
               }
             })
             .then(data => this.$store.dispatch('fetchReport', Object.assign({}, params, { data })))
-            .then(() => output());
+            .then(() => output())
+            .catch((e) => {
+                console.trace(e);
+                this.fetching = false;
+                this.error = `Response with status ${e.status}, please check fetching correct report or url project exists`;
+            });
+        } else {
+          output();
         }
       }
     },
