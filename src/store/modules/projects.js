@@ -2,6 +2,7 @@ import {
   FETCH_PROJECT,
   FETCH_REPORT,
 } from '../types';
+import {reportExists} from '../../projects';
 
 const WARN_REASON = [
   'canceled',
@@ -87,9 +88,32 @@ const getters = {
         name: project.reponame,
         build: result.build_num,
         url: project.vcs_url,
+        owner: project.username,
       };
     });
   },
+  getProject(state, getter) {
+    const projects = getter.projectOverview;
+    return function (owner, name) {
+      const results = projects.filter(project => project.name === name && project.owner === owner);
+      return results.length > 0 ? results[0] : null;
+    };
+  },
+  getReport(state) {
+    return function (host, owner, project, build) {
+      if (reportExists(state.reports, {host, owner, project, build})) {
+        const pages = state.reports[host][owner][project][build];
+        const homePages = pages.filter(report => report.path.endsWith('index.html'));
+        const min = homePages.reduce((min, report) => {
+          const depth = report.pretty_path.split('/').length;
+          return depth < min ? depth : min;
+        }, Infinity);
+        return homePages.filter(report => report.pretty_path.split('/').length === min);
+      } else {
+        return [];
+      }
+    };
+  }
 };
 
 export default {
