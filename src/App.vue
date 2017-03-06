@@ -30,7 +30,6 @@
     },
     methods: {
       refresh() {
-        console.log('Emit Refresh');
         this.$root.$emit('refresh');
       },
       logout() {

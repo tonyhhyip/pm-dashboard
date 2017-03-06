@@ -64,15 +64,7 @@
     },
     mounted() {
       if (this.$store.state.projects.all.length === 0) {
-        fetch('projects')
-          .then((response) => {
-            if (response.status === 200) {
-              return response.json();
-            } else {
-              throw new Error(response);
-            }
-          })
-          .then(data => this.$store.dispatch('fetchProject', data))
+        this.fetchProject()
           .then(() => this.fetching = false)
           .catch(() => {
             localStorage.removeItem('api-token');
@@ -81,11 +73,23 @@
       } else {
         this.fetching = false
       }
+      this.$root.$on('refresh', () => this.fetchProject());
     },
     methods: {
       buildTime(string) {
         const time = moment(string);
         return time.format('Do MMM YYYY (HH:mm:ss)')
+      },
+      fetchProject() {
+        return fetch('projects')
+          .then((response) => {
+            if (response.status === 200) {
+              return response.json();
+            } else {
+              throw new Error(response);
+            }
+          })
+          .then(data => this.$store.dispatch('fetchProject', data));
       }
     }
   }

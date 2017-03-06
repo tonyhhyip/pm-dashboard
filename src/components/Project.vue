@@ -96,7 +96,7 @@
               throw response;
             }
           })
-          .then(data => this.$store.dispatch('fetchBuild', {data, ...this.$route.params}))
+          .then(data => this.$store.dispatch('fetchBuild', {data, ...this.$route.params}));
       }
     }
   }
