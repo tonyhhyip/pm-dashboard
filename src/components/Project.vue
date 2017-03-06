@@ -18,7 +18,7 @@
                         <span>{{ build.author }}</span>
                     </div>
                     <md-button :href="$router.resolve(build.url).href" class="md-icon-button md-list-action">
-                        <md-icon>send</md-icon>
+                        <md-icon class="md-accent">send</md-icon>
                     </md-button>
                 </md-list-item>
             </md-list>
