@@ -11,11 +11,26 @@ const WARN_REASON = [
 ];
 
 const STATUS_ICON = {
-  failed: 'bug_report',
-  success: 'done',
-  fixed: 'build',
-  timedout: 'alarm',
-  no_tests: 'do_not_disturb_alt'
+  failed: {
+    content: 'bug_report',
+    theme: 'fail',
+  },
+  success: {
+    content: 'done',
+    theme: 'success'
+  },
+  fixed: {
+    content: 'build',
+    theme: 'success',
+  },
+  timedout: {
+    content: 'alarm',
+    theme: 'fail',
+  },
+  no_tests: {
+    content: 'do_not_disturb_alt',
+    theme: 'warn',
+  },
 };
 
 function determineLevel(success, fail) {

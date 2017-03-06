@@ -12,7 +12,7 @@
             <md-progress md-indeterminate v-if="fetching" />
             <md-list v-if="builds.length > 0" class="md-double-line">
                 <md-list-item v-for="build in builds" target="_blank" :key="build.number">
-                    <md-icon>{{ build.status }}</md-icon>
+                    <md-icon class="md-primary" :md-theme="build.status.theme">{{ build.status.content }}</md-icon>
                     <div class="md-list-text-container">
                         <span>{{ build.message }} #{{build.number}}</span>
                         <span>{{ build.author }}</span>
