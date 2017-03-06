@@ -4,7 +4,7 @@
         <md-spinner md-indeterminate v-if="fetching" />
         <div class="md-title" v-if="project !== null">
             <h2>
-                {{ project.name }}
+                {{ $route.params.owner }} / {{ $route.params.project }}
                 #{{ $route.params.build }}
                 <a :href="project.url" target="_blank">
                     <i class="fa" :class="'fa-' + $route.params.host"></i>
@@ -30,7 +30,7 @@
                 {{ error }}
             </md-card-content>
             <md-card-actions>
-                <md-button href="/#/" class="md-raised md-accent">Home</md-button>
+                <md-button :href="$router.resolve({name: 'home'}).href" class="md-raised md-accent">Home</md-button>
             </md-card-actions>
         </md-card>
     </container>
@@ -66,8 +66,8 @@
       this.displayReport(params);
     },
     watch: {
-      '$route': (nextValue) => {
-        this.displayReport(nextValue);
+      '$route': function (nextValue) {
+        this.displayReport(nextValue.params);
       }
     },
     methods: {
@@ -78,6 +78,7 @@
       displayReport(params) {
         const reports = this.$store.state.projects.reports;
         const output = () => {
+          this.error = null;
           this.fetching = false;
           const project = this.projects.filter(project => project.name === params.project);
           this.project = project[0];
