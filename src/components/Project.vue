@@ -10,12 +10,13 @@
         </div>
         <md-list>
             <md-progress md-indeterminate v-if="fetching" />
-            <md-list v-if="builds.length > 0" class="md-double-line">
+            <md-list v-if="builds.length > 0" class="md-triple-line">
                 <md-list-item v-for="build in builds" target="_blank" :key="build.number">
                     <md-icon class="md-primary" :md-theme="build.status.theme">{{ build.status.content }}</md-icon>
                     <div class="md-list-text-container">
                         <span>{{ build.message }} #{{build.number}}</span>
                         <span>{{ build.author }}</span>
+                        <span>{{ buildTime(build.time) }}</span>
                     </div>
                     <md-button :href="$router.resolve(build.url).href" class="md-icon-button md-list-action">
                         <md-icon class="md-accent">send</md-icon>
@@ -26,6 +27,7 @@
     </container>
 </template>
 <script>
+  import moment from 'moment';
   import fetch from '../fetch';
   import {projectExists} from '../projects';
   export default{
@@ -52,10 +54,13 @@
     },
     mounted() {
       this.displayBuilds();
-      console.log(this.$root);
       this.$root.$on('refresh', () => this.refresh());
     },
     methods: {
+      buildTime(string) {
+        const time = moment(string);
+        return time.format('Do MMM YYYY (HH:mm:ss)')
+      },
       refresh() {
         this.fetchBuilds()
           .then(() => this.builds = this.$store.getters.getBuild(this.$route.params.host, this.$route.params.owner, this.$route.params.project))

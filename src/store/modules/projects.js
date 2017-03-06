@@ -155,6 +155,7 @@ const getters = {
         build: result.build_num,
         url: project.vcs_url,
         owner: project.username,
+        time: result.added_at,
       };
     });
   },
@@ -198,7 +199,8 @@ const getters = {
             number: build.build_num,
             status: build.status in STATUS_ICON ? STATUS_ICON[build.status] : build.status,
             message: build.subject,
-            author: build.author_name
+            author: build.author_name,
+            time: build.stop_time,
           }
         });
       } else {

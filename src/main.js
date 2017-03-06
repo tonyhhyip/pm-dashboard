@@ -14,13 +14,16 @@ Vue.material.registerTheme('default', {
 
 Vue.material.registerTheme({
   success: {
-    primary: 'green'
+    primary: 'green',
+    accent: 'white',
   },
   fail: {
-    primary: 'red'
+    primary: 'red',
+    accent: 'white',
   },
   warn: {
-    primary: 'orange'
+    primary: 'orange',
+    accent: 'white',
   },
 });
 
