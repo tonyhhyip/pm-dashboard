@@ -3,7 +3,7 @@
         <h2>Projects</h2>
         <br v-if="fetching" />
         <md-progress md-indeterminate v-if="fetching" />
-        <md-card v-for="project in projects" class="md-primary" :md-theme="project.status" :key="project.name">
+        <md-card v-for="project in projects" class="md-primary" :md-theme="project.status" :key="project.name" v-if="project">
             <md-card-header>
                 <div class="md-title">
                     {{project.name}}
@@ -16,11 +16,17 @@
             </md-card-header>
             <md-card-actions>
                 <md-button
+                        :href="$router.resolve(project.projectPage).href"
+                        class="md-raised"
+                >
+                    Project
+                </md-button>
+                <md-button
                         :href="$router.resolve(project.report).href"
                         class="md-raised"
                         v-if="project.status !== 'warn'"
                 >
-                    View Report
+                    Report
                 </md-button>
             </md-card-actions>
         </md-card>

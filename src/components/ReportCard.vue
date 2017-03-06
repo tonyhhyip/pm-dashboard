@@ -5,7 +5,7 @@
                 <h2>
                     {{ owner }} / {{ projectName }}
                     #{{ build }}
-                    <a :href="project.url" target="_blank" v-if="project !== null">
+                    <a :href="projectUrl" target="_blank">
                         <i class="fa" :class="'fa-' + host"></i>
                     </a>
                     <img :src="badge" v-if="badge"/>
@@ -58,6 +58,10 @@
         const provider = this.host === 'github' ? 'gh' : 'bb';
         return `https://circleci.com/${provider}/${this.owner}/${this.projectName}/tree/master.svg?style=svg&circle-token=${this.token}`;
       },
+      projectUrl() {
+        const hostname = this.host === 'github' ? 'github.com' : 'bitbucket.org';
+        return `https://${hostname}/${this.owner}/${this.projectName}`
+      },
       ...mapState(['token']),
       ...mapGetters([
         'getProject',
@@ -87,14 +91,13 @@
         return `${name.charAt(0).toUpperCase()}${name.substr(1)}`;
       },
       displayReport(host, owner, project, build) {
-        const reports = this.$store.state.projects.reports;
         const output = () => {
           this.error = null;
           this.fetching = false;
           this.project = this.getProject(owner, project);
           this.reports = this.getReport(host, owner, project, build);
         };
-        if (!reportExists(reports, {host, owner, project, build})) {
+        if (!reportExists(this.$store.state.projects.reports, {host, owner, project, build})) {
           fetch(`project/${host}/${owner}/${project}/${build}/artifacts`)
             .then((response) => {
               if (response.status === 200) {

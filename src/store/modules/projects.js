@@ -1,13 +1,22 @@
 import {
   FETCH_PROJECT,
   FETCH_REPORT,
+  FETCH_BUILD,
 } from '../types';
-import {reportExists} from '../../projects';
+import {reportExists, projectExists} from '../../projects';
 
 const WARN_REASON = [
   'canceled',
   'no_tests',
 ];
+
+const STATUS_ICON = {
+  failed: 'bug_report',
+  success: 'done',
+  fixed: 'build',
+  timedout: 'alarm',
+  no_tests: 'do_not_disturb_alt'
+};
 
 function determineLevel(success, fail) {
   if (!fail) {
@@ -33,6 +42,10 @@ const state = {
     bitbucket: {},
     github: {},
   },
+  builds: {
+    bitbucket: {},
+    github: {},
+  },
 };
 
 const mutations = {
@@ -49,6 +62,15 @@ const mutations = {
         }
       }
     });
+  },
+  [FETCH_BUILD](state, {host, owner, project, data}) {
+    state.builds = Object.assign({}, state.builds, {
+      [host]: {
+        [owner]: {
+          [project]: data,
+        }
+      }
+    });
   }
 };
 
@@ -59,6 +81,9 @@ const actions = {
   fetchReport({commit}, report) {
     commit(FETCH_REPORT, report);
   },
+  fetchBuild({commit}, build) {
+    commit(FETCH_BUILD, build);
+  }
 };
 
 const getters = {
@@ -67,6 +92,9 @@ const getters = {
   },
   projectOverview(state, getter) {
     return getter.allProject.map((project) => {
+      if (!('master' in project.branches)) {
+        return {};
+      }
       const success = project.branches.master.last_success;
       const fail = project.branches.master.last_non_success;
       const status = determineLevel(success, fail);
@@ -80,9 +108,18 @@ const getters = {
           build: result.build_num,
         },
       };
+      const projectPage = {
+        name: 'project',
+        params: {
+          host: project.vcs_type,
+          owner: project.username,
+          project: project.reponame,
+        },
+      };
       return {
         status,
         report,
+        projectPage,
         commit: result.vcs_revision.substr(0, 6),
         icon: project.vcs_type,
         name: project.reponame,
@@ -113,6 +150,32 @@ const getters = {
         return [];
       }
     };
+  },
+  getBuild(state) {
+    return function (host, owner, project) {
+      if (projectExists(state.builds, {host, owner, project})) {
+        const builds = state.builds[host][owner][project];
+        return builds.map(build => {
+          return {
+            url: {
+              name: 'report',
+              params: {
+                host,
+                owner,
+                project,
+                build: build.build_num
+              },
+            },
+            number: build.build_num,
+            status: build.status in STATUS_ICON ? STATUS_ICON[build.status] : build.status,
+            message: build.subject,
+            author: build.author_name
+          }
+        });
+      } else {
+        return [];
+      }
+    }
   }
 };
 
