@@ -2,6 +2,7 @@ import {
   FETCH_PROJECT,
   FETCH_REPORT,
   FETCH_BUILD,
+  CLEAR_PROJECT,
 } from '../types';
 import {reportExists, projectExists} from '../../projects';
 
@@ -86,6 +87,19 @@ const mutations = {
         }
       }
     });
+  },
+  [CLEAR_PROJECT](state) {
+    state.all = [];
+
+    state.reports = {
+      bitbucket: {},
+      github: {},
+    };
+
+    state.builds = {
+      bitbucket: {},
+      github: {},
+    };
   }
 };
 

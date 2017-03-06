@@ -45,26 +45,33 @@
     components: {
       container: require('./Container.vue'),
     },
+    watch: {
+      '$route': function () {
+        this.displayBuilds();
+      }
+    },
     mounted() {
-      this.fetchBuilds();
+      this.displayBuilds();
+      console.log(this.$root);
+      this.$root.$on('refresh', () => this.refresh());
     },
     methods: {
-      fetchBuilds() {
+      refresh() {
+        this.fetchBuilds()
+          .then(() => this.builds = this.$store.getters.getBuild(this.$route.params.host, this.$route.params.owner, this.$route.params.project))
+          .catch((e) => {
+            console.trace(e);
+            this.error = `Response with status ${e.status}, please check fetching correct report or url project exists`;
+          });
+      },
+      displayBuilds() {
         const output = () => {
           this.error = null;
           this.fetching = false;
           this.builds = this.$store.getters.getBuild(this.$route.params.host, this.$route.params.owner, this.$route.params.project);
         };
         if (!projectExists(this.$store.state.projects.reports, this.$route.params)) {
-          fetch(`project/${this.$route.params.host}/${this.$route.params.owner}/${this.$route.params.project}/tree/master?filter=completed`)
-            .then((response) => {
-              if (response.status === 200) {
-                return response.json()
-              } else {
-                throw response;
-              }
-            })
-            .then(data => this.$store.dispatch('fetchBuild', {data, ...this.$route.params}))
+          this.fetchBuilds()
             .then(() => output())
             .catch((e) => {
               console.trace(e);
@@ -74,6 +81,17 @@
         } else {
           output();
         }
+      },
+      fetchBuilds() {
+        return fetch(`project/${this.$route.params.host}/${this.$route.params.owner}/${this.$route.params.project}/tree/master?filter=completed`)
+          .then((response) => {
+            if (response.status === 200) {
+              return response.json()
+            } else {
+              throw response;
+            }
+          })
+          .then(data => this.$store.dispatch('fetchBuild', {data, ...this.$route.params}))
       }
     }
   }
