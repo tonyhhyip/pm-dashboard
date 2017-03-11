@@ -149,7 +149,7 @@ const getters = {
         status,
         report,
         projectPage,
-        commit: result.vcs_revision.substr(0, 6),
+        commit: result.vcs_revision.substr(0, 7),
         icon: project.vcs_type,
         name: project.reponame,
         build: result.build_num,
@@ -201,6 +201,7 @@ const getters = {
             message: build.subject,
             author: build.author_name,
             time: build.stop_time,
+            commit: build.vcs_revision.substr(0, 7),
           }
         });
       } else {

@@ -14,8 +14,8 @@
                 <md-list-item v-for="build in builds" target="_blank" :key="build.number">
                     <md-icon class="md-primary" :md-theme="build.status.theme">{{ build.status.content }}</md-icon>
                     <div class="md-list-text-container">
-                        <span>{{ build.message }} #{{build.number}}</span>
-                        <span>{{ build.author }}</span>
+                        <span class="md-title">#{{build.number}} {{ build.message }}</span>
+                        <span class="md-subhead">{{ build.commit }} ({{ build.author }})</span>
                         <span>{{ buildTime(build.time) }}</span>
                     </div>
                     <md-button :href="$router.resolve(build.url).href" class="md-icon-button md-list-action">
