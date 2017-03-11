@@ -54,7 +54,7 @@
     },
     mounted() {
       this.displayBuilds();
-      this.$root.$on('refresh', () => this.refresh());
+      this.$root.$on('refresh', () => this.$router.currentRoute === 'project' && this.refresh());
     },
     methods: {
       buildTime(string) {

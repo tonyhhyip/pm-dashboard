@@ -73,7 +73,7 @@
       } else {
         this.fetching = false
       }
-      this.$root.$on('refresh', () => this.fetchProject());
+      this.$root.$on('refresh', () => this.$router.currentRoute.name === 'home' && this.fetchProject());
     },
     methods: {
       buildTime(string) {
