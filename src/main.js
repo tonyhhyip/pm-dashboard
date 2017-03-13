@@ -9,7 +9,7 @@ import fetch from './fetch';
 Vue.use(VueMaterial);
 
 Vue.material.registerTheme('default', {
-  primary: 'purple'
+  primary: 'deep-purple'
 });
 
 Vue.material.registerTheme({
