@@ -81,15 +81,19 @@
         return time.format('Do MMM YYYY (HH:mm:ss)')
       },
       fetchProject() {
+        this.fetching = true;
         return fetch('projects')
-          .then((response) => {
-            if (response.status === 200) {
-              return response.json();
-            } else {
-              throw new Error(response);
-            }
-          })
-          .then(data => this.$store.dispatch('fetchProject', data));
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    throw new Error(response);
+                }
+            })
+            .then(data => this.$store.dispatch('fetchProject', data))
+            .then(() => {
+                this.fetching = false;
+            });
       }
     }
   }

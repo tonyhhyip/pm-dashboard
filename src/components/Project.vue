@@ -54,7 +54,7 @@
     },
     mounted() {
       this.displayBuilds();
-      this.$root.$on('refresh', () => this.$router.currentRoute === 'project' && this.refresh());
+      this.$root.$on('refresh', () => this.$router.currentRoute.name === 'project' && this.refresh());
     },
     methods: {
       buildTime(string) {
@@ -66,6 +66,7 @@
           .then(() => this.builds = this.$store.getters.getBuild(this.$route.params.host, this.$route.params.owner, this.$route.params.project))
           .catch((e) => {
             console.trace(e);
+
             this.error = `Response with status ${e.status}, please check fetching correct report or url project exists`;
           });
       },
@@ -88,6 +89,7 @@
         }
       },
       fetchBuilds() {
+        this.fetching = true;
         return fetch(`project/${this.$route.params.host}/${this.$route.params.owner}/${this.$route.params.project}/tree/master?filter=completed`)
           .then((response) => {
             if (response.status === 200) {
@@ -96,7 +98,10 @@
               throw response;
             }
           })
-          .then(data => this.$store.dispatch('fetchBuild', {data, ...this.$route.params}));
+          .then(data => this.$store.dispatch('fetchBuild', {data, ...this.$route.params}))
+          .then(() => {
+            this.fetching = false
+          });
       }
     }
   }
