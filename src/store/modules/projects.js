@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {
   FETCH_PROJECT,
   FETCH_REPORT,
@@ -202,6 +203,23 @@ const getters = {
             author: build.author_name,
             time: build.stop_time,
             commit: build.vcs_revision.substr(0, 7),
+          }
+        });
+      } else {
+        return [];
+      }
+    }
+  },
+  getBuildTime(state) {
+    return function (host, owner, project) {
+      if (projectExists(state.builds, {host, owner, project})) {
+        const builds = state.builds[host][owner][project];
+        return builds.map(build => {
+          return {
+            number: build.build_num,
+            end: moment(build.stop_time),
+            queue: moment(build.queued_at),
+            start: moment(build.start_time),
           }
         });
       } else {
