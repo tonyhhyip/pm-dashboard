@@ -8,7 +8,6 @@
                     <a :href="projectUrl" target="_blank">
                         <i class="fa" :class="'fa-' + host"></i>
                     </a>
-                    <img :src="badge" v-if="badge"/>
                 </h2>
             </div>
             <div class="md-title" v-if="error !== null">
@@ -54,10 +53,6 @@
       }
     },
     computed: {
-      badge() {
-        const provider = this.host === 'github' ? 'gh' : 'bb';
-        return `https://circleci.com/${provider}/${this.owner}/${this.projectName}/tree/master.svg?style=svg&circle-token=${this.token}`;
-      },
       projectUrl() {
         const hostname = this.host === 'github' ? 'github.com' : 'bitbucket.org';
         return `https://${hostname}/${this.owner}/${this.projectName}`

@@ -3,7 +3,17 @@
     export default Line.extend({
       props: ['data', 'options'],
       mounted() {
-        this.renderChart(this.data, this.options);
+        this.render();
+      },
+      watch: {
+        data() {
+          this.render();
+        }
+      },
+      methods: {
+        render() {
+          this.renderChart(this.data, this.options);
+        }
       }
     });
 </script>

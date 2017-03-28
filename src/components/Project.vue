@@ -5,6 +5,7 @@
                 {{ $route.params.owner }} / {{ $route.params.project }}
                 <a :href="projectUrl" target="_blank">
                 <i class="fa" :class="'fa-' + $route.params.host"></i>
+                <img :src="badge" v-if="badge"/>
             </a>
             </h2>
         </div>
@@ -51,9 +52,21 @@
             yAxes: [
               {
                 id: 'build',
+                position: 'left',
+                beginAtZero: true,
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Build Time (Minutes)'
+                },
               },
               {
                 id: 'queue',
+                position: 'right',
+                beginAtZero: true,
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Queue Time (Minutes)'
+                },
               },
             ],
           },
@@ -61,9 +74,13 @@
       };
     },
     computed: {
+      badge() {
+        const provider = this.$route.params.host === 'github' ? 'gh' : 'bb';
+        return `https://circleci.com/${provider}/${this.$route.params.owner}/${this.$route.params.project}/tree/master.svg?style=svg&circle-token=${this.$store.state.token}`;
+      },
       projectUrl() {
         const hostname = this.$route.params.host === 'github' ? 'github.com' : 'bitbucket.org';
-        return `https://${hostname}/${this.owner}/${this.project}`
+        return `https://${hostname}/${this.$route.params.owner}/${this.$route.params.project}`
       },
       graphData() {
         const buildTime = this.$store.getters.getBuildTime(this.$route.params.host, this.$route.params.owner, this.$route.params.project);
@@ -74,15 +91,15 @@
               label: 'Build Time',
               borderColor: '#673AB7',
               data: buildTime.map(build => build.end.diff(build.start) / 1000 / 60).reverse(),
-              yAxisID: 'build',
               fill: false,
+              yAxisID: 'build',
             },
             {
               label: 'Queue Time',
               borderColor: '#ff4081',
-              data: buildTime.map(build => build.start.diff(build.queue) / 1000).reverse(),
-              yAxisID: 'queue',
+              data: buildTime.map(build => Math.abs(build.start.diff(build.queue)) / 1000 / 60).reverse(),
               fill: false,
+              yAxisID: 'queue',
             },
           ],
         };

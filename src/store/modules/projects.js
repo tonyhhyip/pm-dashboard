@@ -218,7 +218,7 @@ const getters = {
           return {
             number: build.build_num,
             end: moment(build.stop_time),
-            queue: moment(build.queued_at),
+            queue: moment(build.usage_queued_at),
             start: moment(build.start_time),
           }
         });
