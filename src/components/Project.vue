@@ -5,8 +5,8 @@
                 {{ $route.params.owner }} / {{ $route.params.project }}
                 <a :href="projectUrl" target="_blank">
                 <i class="fa" :class="'fa-' + $route.params.host"></i>
-                <img :src="badge" v-if="badge"/>
-            </a>
+                </a>
+                <img :src="badge" v-if="badge" />
             </h2>
         </div>
         <div>
