@@ -1,10 +1,13 @@
 import 'babel-polyfill';
 import Vue from 'vue';
 import VueMaterial from 'vue-material';
+import { sync } from 'vuex-router-sync';
 import App from './App.vue';
 import router from './router';
 import store from './store';
 import fetch from './fetch';
+
+sync(store, router);
 
 Vue.use(VueMaterial);
 
