@@ -2,9 +2,9 @@
     <container>
         <div class="md-title" v-if="error === null">
             <h2>
-                {{ $route.params.owner }} / {{ $route.params.project }}
+                {{ params.owner }} / {{ params.project }}
                 <a :href="projectUrl" target="_blank">
-                <i class="fa" :class="'fa-' + $route.params.host"></i>
+                <i class="fa" :class="'fa-' + params.host"></i>
                 </a>
                 <img :src="badge" v-if="badge" />
             </h2>
@@ -41,6 +41,7 @@
   import fetch from '../fetch';
   import {projectExists} from '../projects';
   import Graph from './Graph.vue';
+  import { mapState, mapGetters, mapActions } from 'vuex';
   export default{
     data(){
       return {
@@ -75,15 +76,15 @@
     },
     computed: {
       badge() {
-        const provider = this.$route.params.host === 'github' ? 'gh' : 'bb';
-        return `https://circleci.com/${provider}/${this.$route.params.owner}/${this.$route.params.project}/tree/master.svg?style=svg&circle-token=${this.$store.state.token}`;
+        const provider = this.params.host === 'github' ? 'gh' : 'bb';
+        return `https://circleci.com/${provider}/${this.params.owner}/${this.params.project}/tree/master.svg?style=svg&circle-token=${this.token}`;
       },
       projectUrl() {
-        const hostname = this.$route.params.host === 'github' ? 'github.com' : 'bitbucket.org';
-        return `https://${hostname}/${this.$route.params.owner}/${this.$route.params.project}`
+        const hostname = this.params.host === 'github' ? 'github.com' : 'bitbucket.org';
+        return `https://${hostname}/${this.params.owner}/${this.params.project}`
       },
       graphData() {
-        const buildTime = this.$store.getters.getBuildTime(this.$route.params.host, this.$route.params.owner, this.$route.params.project);
+        const buildTime = this.getBuildTime(this.params.host, this.params.owner, this.params.project);
         return {
           xLabels: buildTime.map(build => build.number).reverse(),
           datasets: [
@@ -103,7 +104,17 @@
             },
           ],
         };
-      }
+      },
+      ...mapState({
+        route: state => state.route,
+        params: state => state.route.params,
+        token: state => state.token,
+        reports: state => state.projects.reports,
+      }),
+      ...mapGetters([
+        'getBuild',
+        'getBuildTime',
+      ]),
     },
     components: {
       container: require('./Container.vue'),
@@ -116,7 +127,7 @@
     },
     mounted() {
       this.displayBuilds();
-      this.$root.$on('refresh', () => this.$router.currentRoute.name === 'project' && this.refresh());
+      this.$root.$on('refresh', () => this.$route.currentRoute.name === 'project' && this.refresh());
     },
     methods: {
       buildTime(string) {
@@ -125,7 +136,7 @@
       },
       refresh() {
         this.fetchBuilds()
-          .then(() => this.builds = this.$store.getters.getBuild(this.$route.params.host, this.$route.params.owner, this.$route.params.project))
+          .then(() => this.builds = this.getBuild(this.params.host, this.params.owner, this.params.project))
           .catch((e) => {
             ``.trace(e);
             this.error = `Response with status ${e.status}, please check fetching correct report or url project exists`;
@@ -135,9 +146,9 @@
         const output = () => {
           this.error = null;
           this.fetching = false;
-          this.builds = this.$store.getters.getBuild(this.$route.params.host, this.$route.params.owner, this.$route.params.project);
+          this.builds = this.getBuild(this.params.host, this.params.owner, this.params.project);
         };
-        if (!projectExists(this.$store.state.projects.reports, this.$route.params)) {
+        if (!projectExists(this.reports, this.params)) {
           this.fetchBuilds()
             .then(() => output())
             .catch((e) => {
@@ -151,7 +162,7 @@
       },
       fetchBuilds() {
         this.fetching = true;
-        return fetch(`project/${this.$route.params.host}/${this.$route.params.owner}/${this.$route.params.project}/tree/master?filter=completed`)
+        return fetch(`project/${this.params.host}/${this.params.owner}/${this.params.project}/tree/master?filter=completed`)
           .then((response) => {
             if (response.status === 200) {
               return response.json()
@@ -159,11 +170,12 @@
               throw response;
             }
           })
-          .then(data => this.$store.dispatch('fetchBuild', {data, ...this.$route.params}))
+          .then(data => this.fetchBuild({data, ...this.params}))
           .then(() => {
             this.fetching = false
           });
-      }
+      },
+      ...mapActions(['fetchBuild']),
     }
   }
 </script>
